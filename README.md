@@ -33,7 +33,7 @@ Este é um ambiente de **lab**: `deletion_protection = false` e `skip_final_snap
 
 - Terraform `>= 1.11`
 - Credenciais AWS com permissão para RDS, EC2 (VPC/SG) e acesso ao bucket de state
-- Acesso ao bucket S3 `grupo-soat-oficina-mecanica-1-terraform-state` (backend remoto, ver [backend.tf](backend.tf))
+- Acesso ao bucket S3 `grupo-soat-oficina-mecanica-terraform-state` (backend remoto, ver [backend.tf](backend.tf))
 
 ## Variáveis
 
