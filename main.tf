@@ -1,10 +1,11 @@
-data "terraform_remote_state" "infra" {
-  backend = "s3"
+data "aws_vpc" "default" {
+  default = true
+}
 
-  config = {
-    bucket = var.infra_state_bucket
-    key    = var.infra_state_key
-    region = var.aws_region
+data "aws_subnets" "default" {
+  filter {
+    name   = "vpc-id"
+    values = [data.aws_vpc.default.id]
   }
 }
 
@@ -12,7 +13,7 @@ data "terraform_remote_state" "infra" {
 resource "aws_db_subnet_group" "rds" {
   name = "oficina-mecanica-rds"
 
-  subnet_ids = data.terraform_remote_state.infra.outputs.subnet_ids
+  subnet_ids = data.aws_subnets.default.ids
 
   tags = {
     Name    = "oficina-mecanica-rds"
@@ -25,7 +26,7 @@ resource "aws_security_group" "rds" {
   name        = "oficina-mecanica-rds"
   description = "Security group for Oficina Mecanica PostgreSQL"
 
-  vpc_id = data.terraform_remote_state.infra.outputs.vpc_id
+  vpc_id = data.aws_vpc.default.id
 
   ingress {
     description = "PostgreSQL from VPC"
@@ -36,7 +37,7 @@ resource "aws_security_group" "rds" {
     protocol = "tcp"
 
     cidr_blocks = [
-      data.terraform_remote_state.infra.outputs.vpc_cidr_block
+      data.aws_vpc.default.cidr_block
     ]
   }
 
