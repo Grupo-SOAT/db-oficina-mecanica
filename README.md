@@ -33,7 +33,7 @@ Este é um ambiente de **lab**: `deletion_protection = false` e `skip_final_snap
 
 - Terraform `>= 1.11`
 - Credenciais AWS com permissão para RDS, EC2 (VPC/SG) e acesso ao bucket de state
-- Acesso ao bucket S3 `grupo-soat-oficina-mecanica-terraform-state` (backend remoto, ver [backend.tf](backend.tf))
+- Acesso ao bucket S3 do backend remoto (nome definido em tempo de `init`, ver [backend.tf](backend.tf) e seção [Backend do state](#backend-do-state))
 
 ## Variáveis
 
@@ -49,19 +49,23 @@ Este é um ambiente de **lab**: `deletion_protection = false` e `skip_final_snap
 
 `db_username` e `db_password` são `sensitive` e não têm default — precisam ser passados via `-var`, `terraform.tfvars` (fora do controle de versão) ou variável de ambiente `TF_VAR_*`.
 
+## Backend do state
+
+O bucket S3 do backend remoto não fica fixo no [backend.tf](backend.tf) — é injetado em tempo de `terraform init` via `-backend-config`, para usar a mesma conta/bucket configurados no repositório (padrão espelhado do `k8s-infra-oficina-mecanica`). A variável do GitHub Actions é `TF_STATE_BUCKET` (Settings → Secrets and variables → Actions → Variables).
+
 ## Como rodar
 
 ### Local
 
 ```bash
-terraform init
+terraform init -backend-config="bucket=<nome-do-bucket>"
 terraform plan -var="db_username=<usuario>" -var="db_password=<senha>"
 terraform apply -var="db_username=<usuario>" -var="db_password=<senha>"
 ```
 
 ### Via GitHub Actions
 
-Dois workflows manuais (`workflow_dispatch`), ambos usando os secrets `AWS_ACCESS_KEY_ID`, `AWS_SECRET_ACCESS_KEY`, `AWS_SESSION_TOKEN`, `POSTGRES_USER` e `POSTGRES_PASSWORD`:
+Dois workflows manuais (`workflow_dispatch`), usando os secrets `AWS_ACCESS_KEY_ID`, `AWS_SECRET_ACCESS_KEY`, `AWS_SESSION_TOKEN`, `POSTGRES_USER`, `POSTGRES_PASSWORD` e a variável `TF_STATE_BUCKET`:
 
 - [`Deploy Database`](.github/workflows/db.yaml) — `terraform apply` e, ao final, dispara um `repository_dispatch` (`db-deployed`) para o `k8s-infra-oficina-mecanica` com host/porta/nome do banco
 - [`Destroy Database`](.github/workflows/db-destroy.yaml) — `terraform destroy`, apaga a instância **sem snapshot final** (ambiente de lab)
