@@ -26,8 +26,8 @@ Este é um ambiente de **lab**: `deletion_protection = false` e `skip_final_snap
 
 | Repositório | Papel |
 |---|---|
-| [k8s-infra-oficina-mecanica](https://github.com/Grupo-SOAT/k8s-infra-oficina-mecanica) | Cluster EKS, ECR, API Gateway, observability. É acionado via `repository_dispatch` (`db-deployed`) assim que o RDS sobe |
-| [sistema-oficina-mecanica](https://github.com/Grupo-SOAT/sistema-oficina-mecanica) | Aplicação Spring Boot que consome este banco |
+| [k8s-infra-oficina-mecanica](https://github.com/Grupo-SOAT/k8s-infra-oficina-mecanica) | Cluster EKS, ECR, API Gateway, observability. É acionado via `repository_dispatch` (`db-deployed`) assim que o RDS sobe e resolve o endpoint do banco via `data.aws_db_instance` |
+| [mnl-oficina-mecanica](https://github.com/Grupo-SOAT/mnl-oficina-mecanica) | Aplicação Spring Boot que consome este banco |
 
 ## Pré-requisitos
 
