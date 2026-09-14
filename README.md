@@ -65,7 +65,7 @@ terraform apply -var="db_username=<usuario>" -var="db_password=<senha>"
 
 ### Via GitHub Actions
 
-Dois workflows manuais (`workflow_dispatch`), usando os secrets `AWS_ACCESS_KEY_ID`, `AWS_SECRET_ACCESS_KEY`, `AWS_SESSION_TOKEN`, `POSTGRES_USER`, `POSTGRES_PASSWORD` e a variável `TF_STATE_BUCKET`:
+Dois workflows manuais (`workflow_dispatch`), usando os secrets `AWS_ACCESS_KEY_ID`, `AWS_SECRET_ACCESS_KEY`, `AWS_SESSION_TOKEN`, `POSTGRES_USER`, `POSTGRES_PASSWORD` e as variáveis `AWS_REGION` e `TF_STATE_BUCKET`. Mantenha `AWS_REGION` igual ao `aws_region` configurado no Terraform para que credenciais, state e recursos fiquem na mesma região:
 
 - [`Deploy Database`](.github/workflows/db.yaml) — `terraform apply` e, ao final, dispara um `repository_dispatch` (`db-deployed`) para o `k8s-infra-oficina-mecanica` com host/porta/nome do banco
 - [`Destroy Database`](.github/workflows/db-destroy.yaml) — `terraform destroy`, apaga a instância **sem snapshot final** (ambiente de lab)
